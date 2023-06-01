@@ -48,11 +48,12 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Clone WordPress
-        run: |
-          mkdir ../wp
-          curl -O https://wordpress.org/wordpress-${{ matrix.wp-version }}.tar.gz
-          tar -xf wordpress-${{ matrix.wp-version }}.tar.gz -C ../wp --strip-components=1
-          rm wordpress-${{ matrix.wp-version }}.tar.gz
+        uses: actions/checkout@v3
+        with:
+          repository: WordPress/wordpress-develop
+          ref: refs/tags/${{ matrix.wp-version }}
+          path: ../wp
+
 
       - name: Install Composer dependencies
         run: |
