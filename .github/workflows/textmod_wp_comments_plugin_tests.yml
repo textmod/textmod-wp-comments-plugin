@@ -51,6 +51,13 @@ jobs:
       - name: Set WP_PATH environment variable
         run: echo "WP_PATH=$GITHUB_WORKSPACE/wp" >> $GITHUB_ENV
 
+      - name: Set permissions
+        run: |
+          cd wp
+          sudo chown -R $USER:$USER .
+          sudo find . -type d -exec chmod 755 {} \;
+          sudo find . -type f -exec chmod 644 {} \;        
+
       - name: Install Composer dependencies
         run: |
           cd wp
