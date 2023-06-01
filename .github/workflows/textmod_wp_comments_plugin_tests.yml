@@ -57,6 +57,7 @@ jobs:
       - name: Install Composer dependencies
         run: |
           cd ../wp
+          ls -la
           composer install
 
       - name: Install npm dependencies
