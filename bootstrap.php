@@ -93,4 +93,5 @@ try {
     // The rest of your code...
 } catch (Exception $e) {
     echo 'An error occurred: ' . $e->getMessage();
+    exit(1);
 }
