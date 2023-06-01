@@ -51,7 +51,7 @@ jobs:
         run: |
           mkdir ../wp
           curl -O https://wordpress.org/wordpress-${{ matrix.wp-version }}.tar.gz
-          tar -xf wordpress-${{ matrix.wp-version }}.gz -C ../wp --strip-components=1
+          tar -xf wordpress-${{ matrix.wp-version }}.tar.gz -C ../wp --strip-components=1
           rm wordpress-${{ matrix.wp-version }}.tar.gz
             
 
