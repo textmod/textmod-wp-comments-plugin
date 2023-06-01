@@ -5,7 +5,7 @@ use TextMod\Test\Helpers\CustomDbConnect;
 function rollbackContent()
 {
     // Define the source and destination paths
-    $sourcePath = __DIR__ . '/../../../wp/wp-config.php';
+    $sourcePath = getenv("WP_PATH") . '/wp-config.php';
 
     // Set error reporting level to capture warnings
     error_reporting(E_ALL);
@@ -28,7 +28,7 @@ function rollbackContent()
 function bootstrap()
 {
     // Define the source and destination paths
-    $sourcePath = __DIR__ . '/../../../wp/wp-config.php';
+    $sourcePath = getenv("WP_PATH") . '/wp-config.php';
 
     // Backup the original contents
     copy($sourcePath, $sourcePath . '.bak');
@@ -39,8 +39,16 @@ function bootstrap()
         die('Failed to read wp-config.php file.');
     }
 
+    $mysqlContainerName = '';
+
+    exec("docker ps --format '{{.Names}}' | grep -E 'wp_mysql_1|wp-mysql-1' | head -n 1", $output);
+
+    if (!empty($output)) {
+        $mysqlContainerName = trim($output[0]);
+    }
+
     // Run the Docker shell command and capture the output
-    $output = exec("docker port wp-mysql-1 3306 | grep -oE '[0-9]+$'");
+    $output = exec("docker port $mysqlContainerName 3306 | grep -oE '[0-9]+$'");
 
     // Assign the result to a variable
     $mysqlPort = trim($output);
@@ -50,7 +58,7 @@ function bootstrap()
     }
 
     // Replace the database host with 'localhost:51418'
-    $modifiedContents = str_replace("define( 'DB_HOST', 'mysql' );", "define('DB_HOST', '127.0.0.1:$mysqlPort');", $configContents);
+    $modifiedContents = str_replace("define( 'DB_HOST', 'mysql' );", "define('DB_HOST', '0.0.0.0:$mysqlPort');", $configContents);
 
     // Save the modified contents back to the file
     if (file_put_contents($sourcePath, $modifiedContents) === false) {
@@ -60,10 +68,12 @@ function bootstrap()
     define('MYSQL_CLIENT_FLAGS', MYSQLI_CLIENT_SSL);
 
     require_once(__DIR__ . '/vendor/autoload.php');
-    require_once(__DIR__ . '/../../../wp/src/wp-load.php');
+    require_once(getenv("WP_PATH") . '/src/wp-load.php');
 
     $instance = new CustomDbConnect(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
+    print_r($instance);
     $GLOBALS['wpdb'] = $instance;
+    print_r($GLOBALS['wpdb']);
 }
 
 function shutdown()
@@ -85,4 +95,5 @@ try {
     // The rest of your code...
 } catch (Exception $e) {
     echo 'An error occurred: ' . $e->getMessage();
+    exit(1);
 }

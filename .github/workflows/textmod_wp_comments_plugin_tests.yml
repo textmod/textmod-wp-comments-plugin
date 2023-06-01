@@ -1,0 +1,110 @@
+name: textmod_wp_comments_plugin_tests
+
+on:
+  pull_request:
+    branches:
+      - php7
+
+env:
+  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  TEXTMOD_AUTH_TOKEN: ${{ secrets.TEXTMOD_AUTH_TOKEN }}
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-version: [7.0]
+        node-version: [14]
+        wp-version: [5.9.7]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: xdebug # Enable Xdebug for code coverage
+
+      - name: Install Xdebug
+        if: startsWith(matrix.php-version, '7.') # Xdebug is not required for PHP 8.x
+        run: sudo apt-get install -y php-xdebug
+
+      - name: Install dependencies
+        run: composer install
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Clone WordPress
+        uses: actions/checkout@v3
+        with:
+          repository: WordPress/wordpress-develop
+          ref: refs/tags/${{ matrix.wp-version }}
+          path: wp
+
+      - name: Set WP_PATH environment variable
+        run: |
+          cd wp
+          echo "WP_PATH=$(pwd)" >> $GITHUB_ENV
+
+      - name: Set permissions
+        run: |
+          sudo chown -R $USER:$USER wp
+          sudo chmod -R 777 wp
+
+      - name: Install Composer dependencies
+        run: |
+          cd wp
+          composer install
+
+      - name: Install npm dependencies
+        run: |
+          cd wp
+          npm install
+
+      - name: Build WordPress for development
+        run: |
+          cd wp
+          npm run build:dev
+
+      - name: Start WordPress environment
+        run: |
+          cd wp
+          npm run env:start
+
+      - name: Log running Docker containers
+        run: docker ps -a
+
+      - name: WordPress Docker container debug information
+        run: |
+          cd wp
+          docker-compose run --rm mysql mysql --version
+          docker-compose run --rm php php --version
+          docker-compose run --rm php php -m
+          docker-compose run --rm php php -i
+          docker-compose run --rm php locale -a
+
+      - name: Install WordPress environment
+        run: |
+          cd wp
+          ls -la
+          npm run env:install
+
+      - name: Set permissions on newly generated config file
+        run: |
+          sudo chown -R $USER:$USER wp/wp-config.php
+          sudo chmod -R 777 wp/wp-config.php
+
+      - name: Run PHPUnit tests with coverage
+        run: composer test
+
+      - name: Upload coverage report to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
