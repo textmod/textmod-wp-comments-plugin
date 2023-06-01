@@ -81,9 +81,6 @@ jobs:
       - name: Log running Docker containers
         run: docker ps -a
 
-      - name: Set CONTAINER_NAME environment variable
-        run: echo "CONTAINER_NAME=$(docker ps --format '{{.Names}}' | grep -E '\bmysql\b')" >> $GITHUB_ENV
-
       - name: WordPress Docker container debug information
         run: |
           cd wp

@@ -39,10 +39,16 @@ function bootstrap()
         die('Failed to read wp-config.php file.');
     }
 
-    $containerName = getenv('CONTAINER_NAME');
+    $mysqlContainerName = '';
+
+    exec("docker ps --format '{{.Names}}' | grep -E 'wp_mysql_1|wp-mysql-1' | head -n 1", $output);
+
+    if (!empty($output)) {
+        $mysqlContainerName = trim($output[0]);
+    }
 
     // Run the Docker shell command and capture the output
-    $output = exec("docker port $containerName 3306 | grep -oE '[0-9]+$'");
+    $output = exec("docker port $mysqlContainerName 3306 | grep -oE '[0-9]+$'");
 
     // Assign the result to a variable
     $mysqlPort = trim($output);
