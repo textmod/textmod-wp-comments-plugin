@@ -5,7 +5,7 @@ use TextMod\Test\Helpers\CustomDbConnect;
 function rollbackContent()
 {
     // Define the source and destination paths
-    $sourcePath = __DIR__ . '/../../../wp/wp-config.php';
+    $sourcePath = getenv("WP_PATH") . '/wp-config.php';
 
     // Set error reporting level to capture warnings
     error_reporting(E_ALL);
@@ -28,7 +28,7 @@ function rollbackContent()
 function bootstrap()
 {
     // Define the source and destination paths
-    $sourcePath = __DIR__ . '/../../../wp/wp-config.php';
+    $sourcePath = getenv("WP_PATH") . '/wp-config.php';
 
     // Backup the original contents
     copy($sourcePath, $sourcePath . '.bak');
@@ -60,7 +60,7 @@ function bootstrap()
     define('MYSQL_CLIENT_FLAGS', MYSQLI_CLIENT_SSL);
 
     require_once(__DIR__ . '/vendor/autoload.php');
-    require_once(__DIR__ . '/../../../wp/src/wp-load.php');
+    require_once(getenv("WP_PATH") . '/src/wp-load.php');
 
     $instance = new CustomDbConnect(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
     $GLOBALS['wpdb'] = $instance;
