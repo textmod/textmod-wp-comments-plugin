@@ -55,9 +55,8 @@ jobs:
 
       - name: Set permissions
         run: |
-          cd wp
-          sudo chown -R $USER:$USER /var/www/src
-          sudo chmod -R 755 /var/www/src
+          sudo chown -R $USER:$USER wp
+          sudo chmod -R 755 wp
 
       - name: Install Composer dependencies
         run: |
