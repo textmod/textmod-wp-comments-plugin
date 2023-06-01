@@ -56,7 +56,7 @@ jobs:
       - name: Set permissions
         run: |
           sudo chown -R $USER:$USER wp
-          sudo chmod -R 755 wp
+          sudo chmod -R 777 wp
 
       - name: Install Composer dependencies
         run: |
@@ -93,6 +93,7 @@ jobs:
       - name: Install WordPress environment
         run: |
           cd wp
+          ls -la
           npm run env:install
 
       - name: Run PHPUnit tests with coverage
