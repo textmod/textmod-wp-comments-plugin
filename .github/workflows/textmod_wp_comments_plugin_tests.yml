@@ -71,6 +71,18 @@ jobs:
           cd wp
           npm run env:start
 
+      - name: Log running Docker containers
+        run: docker ps -a
+
+      - name: WordPress Docker container debug information
+        run: |
+          cd wp
+          docker-compose run --rm mysql mysql --version
+          docker-compose run --rm php php --version
+          docker-compose run --rm php php -m
+          docker-compose run --rm php php -i
+          docker-compose run --rm php locale -a
+
       - name: Install WordPress environment
         run: |
           cd wp
