@@ -58,7 +58,7 @@ function bootstrap()
     }
 
     // Replace the database host with 'localhost:51418'
-    $modifiedContents = str_replace("define( 'DB_HOST', 'mysql' );", "define('DB_HOST', '127.0.0.1:$mysqlPort');", $configContents);
+    $modifiedContents = str_replace("define( 'DB_HOST', 'mysql' );", "define('DB_HOST', '0.0.0.0:$mysqlPort');", $configContents);
 
     // Save the modified contents back to the file
     if (file_put_contents($sourcePath, $modifiedContents) === false) {
@@ -71,12 +71,7 @@ function bootstrap()
     require_once(getenv("WP_PATH") . '/src/wp-load.php');
 
     $instance = new CustomDbConnect(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
-
-    var_dump($instance);
-
     $GLOBALS['wpdb'] = $instance;
-
-    var_dump($GLOBALS['wpdb']);
 }
 
 function shutdown()
