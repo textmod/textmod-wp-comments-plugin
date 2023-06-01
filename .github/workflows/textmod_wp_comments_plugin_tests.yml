@@ -47,13 +47,16 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Make folder for WordPress Clone
+        run: |
+          mkdir ../wp
+
       - name: Clone WordPress
         uses: actions/checkout@v3
         with:
           repository: WordPress/wordpress-develop
           ref: refs/tags/${{ matrix.wp-version }}
           path: ../wp
-
 
       - name: Install Composer dependencies
         run: |
