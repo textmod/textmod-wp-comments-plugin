@@ -71,7 +71,12 @@ function bootstrap()
     require_once(getenv("WP_PATH") . '/src/wp-load.php');
 
     $instance = new CustomDbConnect(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
+
+    var_dump($instance);
+
     $GLOBALS['wpdb'] = $instance;
+
+    var_dump($GLOBALS['wpdb']);
 }
 
 function shutdown()
