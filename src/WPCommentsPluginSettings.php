@@ -1,7 +1,7 @@
 <?php
 namespace TextMod;
 
-class WPCommentsAddonPluginSettings {
+class WPCommentsPluginSettings {
     public function __construct() {
         add_action('admin_menu', array($this, 'registerSettingsPage'));
         add_action('admin_init', array($this, 'initializeSettings'));
@@ -10,8 +10,8 @@ class WPCommentsAddonPluginSettings {
     // Register the settings page
     public function registerSettingsPage() {
         add_options_page(
-            'TextMod WP Comments Addon Settings',
-            'TextMod WP Comments Addon',
+            'TextMod WP Comments Plugin Settings',
+            'TextMod WP Comments Plugin',
             'manage_options',
             'textmod_wp_comments_settings',
             array($this, 'renderSettingsPage')
@@ -22,7 +22,7 @@ class WPCommentsAddonPluginSettings {
     public function renderSettingsPage() {
         ?>
         <div class="wrap">
-            <h1>TextMod WP Comments Addon Settings</h1>
+            <h1>TextMod WP Comments Plugin Settings</h1>
             <form method="post" action="options.php">
                 <?php
                 settings_fields('textmod_wp_comments_settings_group');
@@ -76,7 +76,10 @@ class WPCommentsAddonPluginSettings {
 
     // Sanitize the plugin settings
     public function sanitizeSettings($settings) {
-        // Sanitize and validate the settings if needed
+        // Sanitize and validate the settings
+        foreach ($settings as $key => $value) {
+            $settings[$key] = sanitize_text_field($value);
+        }
 
         return $settings;
     }
@@ -117,7 +120,8 @@ class WPCommentsAddonPluginSettings {
 
         echo "<select name='textmod_wp_comments_settings[textmod_action]'>
                 <option value='spam' " . selected('spam', $action, false) . ">Mark as Spam</option>
-                <option value='reject' " . selected('reject', $action, false) . ">Reject</option>
+                <option value='pending' " . selected('pending', $action, false) . ">Mark for Pending</option>
+                <option value='trash' " . selected('trash', $action, false) . ">Move to Trash</option>
               </select>";
     }
 
@@ -125,7 +129,7 @@ class WPCommentsAddonPluginSettings {
     public function textmodApiKeyFieldCallback() {
         $settings = get_option('textmod_wp_comments_settings');
         $textmodApiKey = $settings['textmod_api_key'] ?? '';
-
+        echo "<p>Get your API key from <a href='https://textmod.xyz' target='_blank'>https://textmod.xyz</a></p>";
         echo "<input type='text' name='textmod_wp_comments_settings[textmod_api_key]' value='$textmodApiKey'>";
     }
 }

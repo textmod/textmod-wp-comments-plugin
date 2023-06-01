@@ -67,7 +67,7 @@ class WPCommentsFilterTest extends TestCase
         }
 
         if($expected === '0') {
-            $this->settings['textmod_action'] = 'reject';
+            $this->settings['textmod_action'] = 'pending';
         }
 
         $filter = new WPCommentsFilter($this->textmod, $this->settings);
