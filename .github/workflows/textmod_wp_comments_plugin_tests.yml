@@ -96,6 +96,11 @@ jobs:
           ls -la
           npm run env:install
 
+      - name: Set permissions on newly generated config file
+        run: |
+          sudo chown -R $USER:$USER wp/wp-config.php
+          sudo chmod -R 777 wp/wp-config.php
+
       - name: Run PHPUnit tests with coverage
         run: composer test
 

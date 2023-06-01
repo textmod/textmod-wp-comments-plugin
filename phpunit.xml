@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="bootstrap.php">
+<phpunit failOnWarning="true" bootstrap="bootstrap.php">
     <testsuites>
         <testsuite name="TextMod - WP Comments Addon Plugin">
             <directory suffix="Test.php">./tests/</directory>
@@ -8,7 +8,7 @@
 
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true">
-            <directory>src</directory>
+            <directory>src/WPCommentsFilter.php</directory>
         </whitelist>
     </filter>
 
