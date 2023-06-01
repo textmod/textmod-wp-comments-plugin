@@ -54,13 +54,7 @@ jobs:
           tar -xf wordpress-${{ matrix.wp-version }}.tar.gz -C ../wp --strip-components=1
           rm wordpress-${{ matrix.wp-version }}.tar.gz
 
-      - name: Install Composer dependencies
-        run: |
-          cd ../wp
-          ls -la
-          composer install
-
-      - name: Install npm dependencies
+      - name: Install WordPress npm dependencies
         run: |
           cd ../wp
           npm install
