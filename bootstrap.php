@@ -39,8 +39,7 @@ function bootstrap()
         die('Failed to read wp-config.php file.');
     }
 
-    exec("docker ps --format '{{.Names}}' | grep -E '\\\\bmysql\\\\b'", $output);
-    $containerName = trim($output[0]);
+    $containerName = getenv('CONTAINER_NAME');
 
     // Run the Docker shell command and capture the output
     $output = exec("docker port $containerName 3306 | grep -oE '[0-9]+$'");
